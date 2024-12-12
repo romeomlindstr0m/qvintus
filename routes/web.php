@@ -12,3 +12,5 @@ Route::post('/register', [AuthenticationController::class, 'register'])->name('r
 
 Route::get('/login', [AuthenticationController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthenticationController::class, 'login'])->name('login.process');
+
+Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout')->middleware('auth');

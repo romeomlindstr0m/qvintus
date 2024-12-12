@@ -25,6 +25,15 @@ class AuthenticationController extends Controller
         return view('register');
     }
 
+    public function logout(Request $request): RedirectResponse
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('status', 'Successfully signed out.');
+    }
+
     public function login(Request $request): RedirectResponse
     {
         $rules = [
@@ -39,10 +48,15 @@ class AuthenticationController extends Controller
         $validator = Validator::make($request->only('name', 'password'), $rules, $messages);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator);
+            return back()->withErrors($validator)->withInput();
         }
 
-        return redirect()->route('index');
+        if (Auth::attempt($request->only('name', 'password'))) {
+            $request->session()->regenerate();
+            return redirect()->intended();
+        }
+
+        return back()->withErrors(['name' => 'Username and/or password is incorrect.']);
     }
     
     public function register(Request $request): RedirectResponse
