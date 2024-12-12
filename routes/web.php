@@ -4,8 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthenticationController;
 
 Route::get('/', function() {
-    return view('index');
-})->name('index')->middleware('auth');
+    return redirect()->route('home');
+})->name('index');
+
+Route::get('/home', function() {
+    return view('home');
+})->name('home')->middleware('auth');
 
 Route::get('/register', [AuthenticationController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthenticationController::class, 'register'])->name('register.process');
